@@ -1,0 +1,106 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {%block navBar %}
+<div>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbar"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbar">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" id="login" href="/logout">Logout</a>
+        <a class="nav-item nav-link" id="login" href="/">Home</a>
+      </div>
+    </div>
+  </nav>
+</div>
+
+
+{% endblock %} {% block content
+%}
+
+<form method="Post">
+  <h1 aligne="center">Transactions</h1>
+  <ul class="list-group list-group-flush" id="transaction" display:inline >
+    {% for transaction in user.transaction %}
+  <li class="list-group-item"  style="background-color: {% if transaction.type == 'income' %} #c6ffb3 {% else %} #ff8566 {% endif %};margin-bottom: 10px; border:{% if transaction.type == 'income'%} 1px solid #79ff4d {% else %}  1px solid #ff4d4d{%endif%} ; border-radius: 5px" > 
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+          {{ transaction.title }}
+      </div>
+      <div style="margin-left: auto;">
+          {{ transaction.date }} &nbsp;&nbsp;&nbsp; <span class ="money">{{ transaction.amount }}</span>
+      </div>
+    <button type="button" class="close" onClick="deleteTransaction({{ transaction.id }})">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </li>
+  <script>
+    function formatMoney(value) {
+      return value.toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'EUR'
+      });
+    }
+    
+    window.onload = function() {
+      const moneyElements = document.getElementsByClassName('money');
+      for (const element of moneyElements) {
+        const value = parseFloat(element.innerText.replace(/[^0-9.-]+/g,"")); // Extract numeric value
+        element.innerText = formatMoney(value);
+      }
+    };
+  </script>
+  {% endfor %}
+</ul>
+<div style="margin-left: auto; text-align: right;">
+  <span>Balance: {{balance}}</span>
+</div>
+<br/>
+<div class="container">
+  <form>
+    <div class="row mb-3 align-items-center">
+      <div class="col-auto">
+        <label class="form-label">Transaction Type:</label>
+      </div>
+      <div class="col-auto">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="transactionType" id="income" value="income">
+          <label class="form-check-label" for="income">Income</label>
+        </div>
+      </div>
+      <div class="col-auto">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="transactionType" id="expense" value="expense">
+          <label class="form-check-label" for="expense">Expense</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <label class="col-sm-2 col-form-label" for="transactionTitle">Title:</label>
+      <div class="col-sm-10">
+        <input class="form-control" type="text" id="transactionTitle" name="transactionTitle">
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <label class="col-sm-2 col-form-label" for="amount">Amount:</label>
+      <div class="col-sm-10">
+        <input class="form-control" type="floatformat" id="amount" name="amount">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-10 offset-sm-2">
+        <button type="submit" class="btn btn-primary">Submit Transaction</button>
+      </div>
+    </div>
+<form>
+    
+</form>
+
+{% endblock %}
